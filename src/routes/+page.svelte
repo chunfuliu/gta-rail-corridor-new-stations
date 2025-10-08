@@ -5,7 +5,7 @@
     import popPoints from "../data/pop-1km-500m-intervals.geo.json"
     import gtaMain from "../data/gta-main-lines.geo.json"
     import rtp from "../data/regional-transportation-plan-non-heavy-rail.geo.json"
-    import buffer from "../data/buffer-1km.geo.json"
+    import buffer from "../data/buffer-250m.geo.json"
     import LineChart from "../lib/line-chart.svelte"
     import * as d3 from "d3";
     
@@ -40,6 +40,7 @@
         }
         else{
             map.setFilter("popPoints-layer", ["==", ["get", "Name"], selectedLine]);
+            map.setFilter("buffer-250m-layer", ["==", ["get", "Name"], selectedLine]);
             map.setFilter("labels", ["==", ["get", "Name"], selectedLine]);
         }
     }
@@ -101,11 +102,11 @@
                 type: "geojson",
                 data: rtp,
             });
-            /*
-            map.addSource("buffer-1km", {
+            
+            map.addSource("buffer-250m", {
                 type: "geojson",
                 data: buffer,
-            });*/
+            });
             map.addLayer({
                 id: "rtp-id",
                 type: "line",
@@ -123,16 +124,18 @@
                     ],
                     "line-width": 6
                 },
-            });/*
+            });
+
             map.addLayer({
-                id: "buffer-1km-id",
+                id: "buffer-250m-layer",
                 type: "fill",
-                source: "buffer-1km",
+                source: "buffer-250m",
                 paint: {
                     "fill-color":"#000000",
-                    "fill-opacity": 0.5
+                    "fill-opacity": 0.3
                 },
-            });*/
+                filter : ["==", ["get", "Name"], selectedLine]
+            });
 
             map.addLayer({
                 id: "main-lines-id",
@@ -203,11 +206,12 @@
                 bikecount = e.features[0].properties[daytime];
                 stationIndex = stationNames.indexOf(station);
             });*/
-            map.on("mouseenter", "popPoints-layer", (e) => {
+            map.on("mouseenter", "buffer-250m-layer", (e) => {
                 map.getCanvas().style.cursor = "pointer";
                 fid = e.features[0].properties['Fid']
                 console.log(e.features[0].properties['Name'])
                 console.log(e.features[0].properties['Pop21'])
+                //map.setFilter("popPoints-selected-layer", ["==", ["get", "Fid"], fid]);
                 map.setFilter("popPoints-selected-layer", ["==", ["get", "Fid"], fid]);
             });
             map.on("mouseleave", "popPoints-layer", () => {
