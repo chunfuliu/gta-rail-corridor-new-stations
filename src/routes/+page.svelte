@@ -5,12 +5,15 @@
     import popPoints from "../data/pop-1km-500m-intervals.geo.json"
     import gtaMain from "../data/gta-main-lines.geo.json"
     import rtp from "../data/regional-transportation-plan-non-heavy-rail.geo.json"
-    import buffer from "../data/buffer-1km.geo.json"
+    import buffer from "../data/buffer-250m.geo.json"
     import LineChart from "../lib/line-chart.svelte"
     import * as d3 from "d3";
+
+    
     
     let map;
     let fid = 0
+    let fids = 0
 
     let selectedLine = "Lakeshore East Line"
 
@@ -40,8 +43,15 @@
         }
         else{
             map.setFilter("popPoints-layer", ["==", ["get", "Name"], selectedLine]);
-            map.setFilter("labels", ["==", ["get", "Name"], selectedLine]);
+            map.setFilter("buffer-250m-layer", ["==", ["get", "Name"], selectedLine]);
+            map.setFilter("labels", ["==", ["get", "Fid"], fid]);
         }
+    }
+
+    function fidvalue(fids) {
+        fid = fids
+        console.log(fid)
+        map.setFilter("popPoints-selected-layer", ["==", ["get", "Fid"], fid]);
     }
 
     let circlecolor_perc = [
@@ -78,8 +88,8 @@
             container: "map",
             style: map_styles, //'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
             center: [-79.4, 43.69], // starting position
-            minZoom: 10,
-            maxZoom: 19,
+            minZoom: 8,
+            maxZoom: 30,
             scrollZoom: true,
             attributionControl: false,
         });
@@ -101,11 +111,12 @@
                 type: "geojson",
                 data: rtp,
             });
-            /*
-            map.addSource("buffer-1km", {
+            
+            map.addSource("buffer-250m", {
                 type: "geojson",
                 data: buffer,
-            });*/
+            });
+
             map.addLayer({
                 id: "rtp-id",
                 type: "line",
@@ -119,20 +130,21 @@
                         "Subway", "#D3D3D3",
                         "Priority Bus", "#D3D3D3",
                         "#D3D3D3"
-
                     ],
-                    "line-width": 6
+                    "line-width": 2
                 },
-            });/*
+            });
+
             map.addLayer({
-                id: "buffer-1km-id",
+                id: "buffer-250m-layer",
                 type: "fill",
-                source: "buffer-1km",
+                source: "buffer-250m",
                 paint: {
                     "fill-color":"#000000",
-                    "fill-opacity": 0.5
+                    "fill-opacity": 0
                 },
-            });*/
+                filter : ["==", ["get", "Name"], selectedLine]
+            });
 
             map.addLayer({
                 id: "main-lines-id",
@@ -143,8 +155,6 @@
                     "line-width": 6
                 },
             });
-
-             
 
             map.addLayer({
                 id: "popPoints-layer",
@@ -183,8 +193,8 @@
                     ["case",["==", ["get", "Status"], null], "",  // if null → append nothing
                     ["concat", "\n (", ["get", "Status"], ")"]  // else → add (ID)
                     ]], // <-- use your field here
-                "text-size": 14,
-                "text-offset": [0, 0.5],
+                "text-size": 12,
+                "text-offset": [3, 0],
                 "text-anchor": "top"
                 },
                 paint: {
@@ -203,11 +213,12 @@
                 bikecount = e.features[0].properties[daytime];
                 stationIndex = stationNames.indexOf(station);
             });*/
-            map.on("mouseenter", "popPoints-layer", (e) => {
+            map.on("mouseenter", "buffer-250m-layer", (e) => {
                 map.getCanvas().style.cursor = "pointer";
                 fid = e.features[0].properties['Fid']
                 console.log(e.features[0].properties['Name'])
                 console.log(e.features[0].properties['Pop21'])
+                //map.setFilter("popPoints-selected-layer", ["==", ["get", "Fid"], fid]);
                 map.setFilter("popPoints-selected-layer", ["==", ["get", "Fid"], fid]);
             });
             map.on("mouseleave", "popPoints-layer", () => {
@@ -222,6 +233,7 @@
             stationIndex = stationNames.indexOf(station);
             bikecount = bikes_day1.features[stationIndex].properties[daytime];
             */
+           console.log(fid)
         });
     });
 </script>
@@ -229,34 +241,39 @@
 <div id="map" class="map" />
 
 <div class="header">
-<p>
+
     <select bind:value={selectedLine} on:change={rail_dropdown}>
             {#each railline as rail}
                 <option>{rail}</option>
             {/each}
     </select>
-</p>
-<p>
-    {#key [selectedLine, fid]}
+
+</div>
+<div class="charts">
+    {#key [selectedLine]}
     <LineChart
+        on:change = {(e)=>{
+            fids = e.detail.dispatch_fid;
+            console.log(fids)
+            fidvalue(fids);}
+            
+        }
         lineName={selectedLine}
         jsondata = {popPoints.features}
         fid = {fid}
     />
     {/key}
-</p>
 </div>
 
-<div class = "header">
-    
-</div>
+
+
    
 
 <style>
     .map {
         left: 5vw;
-        top: 5vh;
-        height: 60vh;
+        top: 8vh;
+        height: 50vh;
         width: 90vw;
         position: absolute;
         overflow: hidden;
@@ -270,7 +287,7 @@
         font-size: 20px;*/
 
         left: 5vw;
-        top: 65vh;
+        top: 2vh;
         max-width: 90vw;
         position: absolute;
         overflow: hidden;
@@ -278,12 +295,19 @@
 
     .header select {
         width: auto;
-        height: auto;
+        height: 4vh;
         font-size: 20px;
         color: var(--brandYellow);
         font-family: TradeGothicBold;
         background: white;
         border: none;
+    }
+    .charts{
+        left: 5vw;
+        top: 55vh;
+        max-width: 90vw;
+        position: absolute;
+        overflow: hidden;
     }
     
 
