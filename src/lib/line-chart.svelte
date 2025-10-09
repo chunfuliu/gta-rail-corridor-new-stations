@@ -3,6 +3,7 @@
 	import { line, curveNatural } from "d3";
 	import { onMount } from "svelte";
 	import "../assets/global-styles.css";
+	import { createEventDispatcher } from "svelte"; // for passing the info to page.svelte
 
 	export let jsondata;
 	export let lineName;
@@ -11,6 +12,25 @@
 	let scrollY = 0;
 	let windowWidth;
 	let chartContainer;
+	let barWidth =40
+	let selected_datapoint = undefined;
+    let selected_datapoint_i = undefined;
+	let mouse_x, mouse_y;
+    const setMousePosition = function (event) {
+        mouse_x = event.clientX;
+        mouse_y = event.clientY;
+    };
+	var barPadding = 10; // controls how much spacing the bars will be from the
+	let dispatch_fid = 0
+	// Dispatch 'change' events
+    const dispatch = createEventDispatcher();
+
+    // Allows both bind:value and on:change for parent value retrieval
+    function setValue(val, selectedPoint_i) {
+      dispatch_fid = val;
+	  console.log(dispatch_fid)
+      dispatch("change", {dispatch_fid});
+    }
 
 
 
@@ -64,13 +84,13 @@
       const targetX = xScale(index);
       const leftVisible = chartContainer.scrollLeft;
       const rightVisible = leftVisible + chartContainer.clientWidth;
-      const margin = 50; // optional margin from edges
+      const margin = 70; // optional margin from edges
 
       if (targetX < leftVisible + margin || targetX > rightVisible - margin) {
-        const centerX = targetX - chartContainer.clientWidth / 2;
+        const centerX = targetX - chartContainer.clientWidth*0.9;
         chartContainer.scrollTo({
           left: centerX,
-          //behavior: "smooth"
+          behavior: "smooth"
         });
       }
     }
@@ -151,6 +171,24 @@
 					stroke="#5e5d5d"
 					stroke-width="2"
 				/>
+				<rect
+                        class="bar"
+                        x={xScale(i)-barWidth/2}
+                        y={0}
+                        width={xScale(i)-xScale(i-1)}
+                        height={Math.max(yScale(0))}
+                        on:mouseover={(event) => {
+                            selected_datapoint = point.properties["Fid"];
+                            selected_datapoint_i = i;
+							console.log(selected_datapoint_i)
+                            setValue(selected_datapoint, selected_datapoint_i)
+                        }}
+                        on:mouseout={() => {
+                            selected_datapoint = undefined;
+                        }}
+
+                    />
+				
 				{#if point.properties.Location_N == null && point.properties.Distance%1000 === 0}
 					<text
 						x={xScale(i)}
@@ -224,6 +262,16 @@
 						stroke-dasharray="2 6"
 
 					/>
+					<line
+						x1={padding.left}
+						y1={yScale(point.properties["Pop21"])}
+						x2={width - padding.right}
+						y2={yScale(point.properties["Pop21"])}
+						stroke="#F1C500"
+						stroke-width="2"
+						stroke-dasharray="2 6"
+
+					/>
 					<!-- Station dots -->
 					<circle
 						r="8"
@@ -257,5 +305,22 @@
 		background-color: var(--brandGray90);
 		overflow-x: auto;
 	}
+	    .bar {
+
+        fill: white;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .barLight {
+        opacity: 0;
+    }
+
+    .barLight:hover {
+        stroke: #FFBF00;
+        fill: rgba(0,0,0,0);
+        stroke-width: 2px;
+        opacity: 1;
+    }
 	
 </style>
