@@ -5,7 +5,7 @@
     import popPoints from "../data/pop-1km-500m-intervals.geo.json"
     import gtaMain from "../data/gta-main-lines.geo.json"
     import rtp from "../data/regional-transportation-plan-non-heavy-rail.geo.json"
-    import buffer from "../data/buffer-250m.geo.json"
+    //import buffer from "../data/buffer-250m.geo.json"
     import LineChart from "../lib/line-chart.svelte"
     import * as d3 from "d3";
 
@@ -37,20 +37,19 @@
     async function rail_dropdown (){
         //this function controls the actions after a value (selectedLine) is selected in the drop down
         if (selectedLine == "All"){
-            console.log(selectedLine)
             map.setFilter("popPoints-layer", null);
             map.setFilter("labels", null);
         }
         else{
             map.setFilter("popPoints-layer", ["==", ["get", "Name"], selectedLine]);
-            map.setFilter("buffer-250m-layer", ["==", ["get", "Name"], selectedLine]);
-            map.setFilter("labels", ["==", ["get", "Fid"], fid]);
+            //map.setFilter("buffer-250m-layer", ["==", ["get", "Name"], selectedLine]);
+            map.setFilter("labels", ["==", ["get", "Name"], selectedLine]);
         }
     }
 
     function fidvalue(fids) {
         fid = fids
-        console.log(fid)
+        //console.log(fid)
         map.setFilter("popPoints-selected-layer", ["==", ["get", "Fid"], fid]);
     }
 
@@ -89,7 +88,7 @@
             style: map_styles, //'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
             center: [-79.4, 43.69], // starting position
             minZoom: 8,
-            maxZoom: 30,
+            maxZoom: 20,
             scrollZoom: true,
             attributionControl: false,
         });
@@ -111,12 +110,12 @@
                 type: "geojson",
                 data: rtp,
             });
-            
+            /*
             map.addSource("buffer-250m", {
                 type: "geojson",
                 data: buffer,
             });
-
+            */
             map.addLayer({
                 id: "rtp-id",
                 type: "line",
@@ -134,7 +133,7 @@
                     "line-width": 2
                 },
             });
-
+            /*
             map.addLayer({
                 id: "buffer-250m-layer",
                 type: "fill",
@@ -144,7 +143,7 @@
                     "fill-opacity": 0
                 },
                 filter : ["==", ["get", "Name"], selectedLine]
-            });
+            });*/
 
             map.addLayer({
                 id: "main-lines-id",
@@ -161,8 +160,8 @@
                 type: "circle",
                 source: "popPoints",
                 paint: {
-                    "circle-radius": 6,
-                    "circle-stroke-width": 0.4,
+                    "circle-radius": 10,
+                    "circle-stroke-width": 0,
                     "circle-stroke-color": "#0D534D",
                     "circle-color": circlecolor_perc,
                     "circle-opacity": 1,
@@ -213,11 +212,11 @@
                 bikecount = e.features[0].properties[daytime];
                 stationIndex = stationNames.indexOf(station);
             });*/
-            map.on("mouseenter", "buffer-250m-layer", (e) => {
+            map.on("mouseenter", "popPoints-layer", (e) => {
                 map.getCanvas().style.cursor = "pointer";
                 fid = e.features[0].properties['Fid']
-                console.log(e.features[0].properties['Name'])
-                console.log(e.features[0].properties['Pop21'])
+                //console.log(e.features[0].properties['Name'])
+                //console.log(e.features[0].properties['Pop21'])
                 //map.setFilter("popPoints-selected-layer", ["==", ["get", "Fid"], fid]);
                 map.setFilter("popPoints-selected-layer", ["==", ["get", "Fid"], fid]);
             });
@@ -233,7 +232,7 @@
             stationIndex = stationNames.indexOf(station);
             bikecount = bikes_day1.features[stationIndex].properties[daytime];
             */
-           console.log(fid)
+           //console.log(fid)
         });
     });
 </script>
@@ -254,9 +253,7 @@
     <LineChart
         on:change = {(e)=>{
             fids = e.detail.dispatch_fid;
-            console.log(fids)
             fidvalue(fids);}
-            
         }
         lineName={selectedLine}
         jsondata = {popPoints.features}
