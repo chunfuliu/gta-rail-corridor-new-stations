@@ -14,6 +14,9 @@
     let map;
     let fid = 0
     let fids = 0
+    let pointx
+    let pointy
+
 
     let selectedLine = "Lakeshore East Line"
 
@@ -47,10 +50,25 @@
         }
     }
 
-    function fidvalue(fids) {
+    function fidvalue(fids, pointx, pointy) {
         fid = fids
+        pointx = pointx
+        pointy = pointy
         //console.log(fid)
         map.setFilter("popPoints-selected-layer", ["==", ["get", "Fid"], fid]);
+        const bounds = map.getBounds();
+        const extent = {
+            west: bounds.getWest(),
+            south: bounds.getSouth(),
+            east: bounds.getEast(),
+            north: bounds.getNorth(),
+            };
+
+            console.log(extent);
+            if (pointx < extent.west || pointx > extent.east || pointy < extent.south || pointy > extent.north){
+                map.setCenter([pointx, pointy]);
+            }
+            console.log(pointx, pointy)
     }
 
     let circlecolor_perc = [
@@ -87,14 +105,18 @@
             container: "map",
             style: map_styles, //'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
             center: [-79.4, 43.69], // starting position
-            minZoom: 8,
-            maxZoom: 20,
+            minZoom: 9,
+            maxZoom: 15,
             scrollZoom: true,
             attributionControl: false,
         });
-
+        
+        
         //console.log(stations)
         map.on("load", () => {
+            const layers = map.getStyle().layers;
+
+            
             //adding the station, the data is determined either the "origin" or "destination" data input.
             map.addSource("popPoints", {
                 type: "geojson",
@@ -110,48 +132,34 @@
                 type: "geojson",
                 data: rtp,
             });
-            /*
-            map.addSource("buffer-250m", {
-                type: "geojson",
-                data: buffer,
-            });
-            */
+
             map.addLayer({
                 id: "rtp-id",
                 type: "line",
                 source: "rtp",
+                minzoom: 10,
                 paint: {
                     "line-color":[
                         "match",
                         ["get", "System"],
-                        "LRT",  "#D3D3D3",
-                        "BRT",  "#D3D3D3",
-                        "Subway", "#D3D3D3",
-                        "Priority Bus", "#D3D3D3",
+                        "Subway", "#D97D55",
+                        "LRT",  "#52796f",
+                        "BRT",  "#84a98c",
+                        "Priority Bus", "#cad2c5",
                         "#D3D3D3"
                     ],
                     "line-width": 2
                 },
-            });
-            /*
-            map.addLayer({
-                id: "buffer-250m-layer",
-                type: "fill",
-                source: "buffer-250m",
-                paint: {
-                    "fill-color":"#000000",
-                    "fill-opacity": 0
-                },
-                filter : ["==", ["get", "Name"], selectedLine]
-            });*/
+            }, "place_town");
+
 
             map.addLayer({
                 id: "main-lines-id",
                 type: "line",
                 source: "main-lines",
                 paint: {
-                    "line-color":"#000000",
-                    "line-width": 6
+                    "line-color":"#5e5d5d",
+                    "line-width": 4
                 },
             });
 
@@ -174,9 +182,9 @@
                 type: "circle",
                 source: "popPoints",
                 paint: {
-                    "circle-radius": 6,
+                    "circle-radius": 10,
                     "circle-stroke-width": 4,
-                    "circle-stroke-color": "#F1C500",
+                    "circle-stroke-color": "#191919",
                     "circle-color": "rgba(0,0,0,0)",
                     "circle-opacity": 1,
                 },
@@ -204,14 +212,7 @@
                 filter : ["==", ["get", "Name"], selectedLine]
             });
 
-               /* 
-            map.on("click", "bike-count", (e) => {
-                station = e.features[0].properties["Name"];
-                map.setFilter("bike-clicked", ["==", "Name", station]),
-                    (capacity = e.features[0].properties["Capacity"]);
-                bikecount = e.features[0].properties[daytime];
-                stationIndex = stationNames.indexOf(station);
-            });*/
+
             map.on("mouseenter", "popPoints-layer", (e) => {
                 map.getCanvas().style.cursor = "pointer";
                 fid = e.features[0].properties['Fid']
@@ -224,15 +225,14 @@
                 map.getCanvas().style.cursor = "";
             });
             /*
-            for (let i = 0; i < bikes_day1.features.length; i++) {
-                //console.log(i,bikes_day1.features[i].properties.Name)
-                stationNames.push(bikes_day1.features[i].properties.Name);
+            // Move all layers of type "symbol" to the top
+            for (const layer of layers) {
+                if (layer.type === "symbol") {
+                    //console.log(layer)
+                map.moveLayer(layer.id);
+                }
             }
-
-            stationIndex = stationNames.indexOf(station);
-            bikecount = bikes_day1.features[stationIndex].properties[daytime];
             */
-           //console.log(fid)
         });
     });
 </script>
@@ -253,7 +253,10 @@
     <LineChart
         on:change = {(e)=>{
             fids = e.detail.dispatch_fid;
-            fidvalue(fids);}
+            pointx = e.detail.selected_x;
+            pointy = e.detail.selected_y;
+            //console.log(fids, " ", pointx," ",pointy)
+            fidvalue(fids, pointx, pointy);}
         }
         lineName={selectedLine}
         jsondata = {popPoints.features}
@@ -270,7 +273,7 @@
     .map {
         left: 5vw;
         top: 8vh;
-        height: 50vh;
+        max-height: 50vh;
         width: 90vw;
         position: absolute;
         overflow: hidden;
@@ -296,12 +299,12 @@
         font-size: 20px;
         color: var(--brandYellow);
         font-family: TradeGothicBold;
-        background: white;
+        background: var(--brandGray90);
         border: none;
     }
     .charts{
         left: 5vw;
-        top: 55vh;
+        top: 59vh;
         max-width: 90vw;
         position: absolute;
         overflow: hidden;
