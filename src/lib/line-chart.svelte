@@ -15,6 +15,9 @@
 	let barWidth =40
 	let selected_datapoint = undefined;
     let selected_datapoint_i = undefined;
+	let selected_x
+	let selected_y
+	let selected_coordinates
 	let mouse_x, mouse_y;
     const setMousePosition = function (event) {
         mouse_x = event.clientX;
@@ -26,10 +29,12 @@
     const dispatch = createEventDispatcher();
 
     // Allows both bind:value and on:change for parent value retrieval
-    function setValue(val, selectedPoint_i) {
+    function setValue(val, selected_coordinates) {
       dispatch_fid = val;
-	  //console.log(dispatch_fid)
-      dispatch("change", {dispatch_fid});
+	  selected_x = selected_coordinates[0]
+	  selected_y = selected_coordinates[1]
+	  //console.log(dispatch_fid, selected_x, selected_y)
+      dispatch("change", {dispatch_fid, selected_x, selected_y});
     }
 
 
@@ -44,7 +49,7 @@
 		scrollY = window.scrollY - (windowWidth < 800 ? minus : 750);
 	}
 
-	const padding = { top: 20, right: 40, bottom: 50, left: 40 };
+	const padding = { top: 20, right: 40, bottom: 25, left: 40 };
 	let width = 7000;
 	let height = 300;
 
@@ -179,9 +184,11 @@
                         height={Math.max(yScale(0))}
                         on:mouseover={(event) => {
                             selected_datapoint = point.properties["Fid"];
-                            selected_datapoint_i = i;
-							//console.log(selected_datapoint_i)
-                            setValue(selected_datapoint, selected_datapoint_i)
+							selected_coordinates = point.geometry.coordinates;
+							//selected_y = point.properties["Y"];
+                            //selected_datapoint_i = i;
+							//console.log(selected_x, "  ", selected_y)
+                            setValue(selected_datapoint, selected_coordinates)
                         }}
                         on:mouseout={() => {
                             selected_datapoint = undefined;
@@ -304,6 +311,7 @@
 		margin: 0 auto;
 		background-color: var(--brandGray90);
 		overflow-x: auto;
+		scrollbar-width: 1px;
 	}
 	    .bar {
 
@@ -312,15 +320,25 @@
         cursor: pointer;
     }
 
-    .barLight {
-        opacity: 0;
+	/* SCROLL BARS */
+    ::-webkit-scrollbar {
+        width: 1px;
+		height: 10px;
+    } /* Track */
+    ::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 1px grey;
+        border-radius: 0px;
     }
 
-    .barLight:hover {
-        stroke: #FFBF00;
-        fill: rgba(0,0,0,0);
-        stroke-width: 2px;
-        opacity: 1;
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #41729f;
+        border-radius: 2px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #41729f;
     }
 	
 </style>
