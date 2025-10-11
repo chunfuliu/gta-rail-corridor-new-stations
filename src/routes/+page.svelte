@@ -273,7 +273,6 @@
     .map {
         left: 5vw;
         top: 8vh;
-        max-height: 50vh;
         width: 90vw;
         position: absolute;
         overflow: hidden;
