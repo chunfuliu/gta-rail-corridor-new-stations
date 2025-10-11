@@ -28,7 +28,7 @@
     // Allows both bind:value and on:change for parent value retrieval
     function setValue(val, selectedPoint_i) {
       dispatch_fid = val;
-	  console.log(dispatch_fid)
+	  //console.log(dispatch_fid)
       dispatch("change", {dispatch_fid});
     }
 
@@ -180,7 +180,7 @@
                         on:mouseover={(event) => {
                             selected_datapoint = point.properties["Fid"];
                             selected_datapoint_i = i;
-							console.log(selected_datapoint_i)
+							//console.log(selected_datapoint_i)
                             setValue(selected_datapoint, selected_datapoint_i)
                         }}
                         on:mouseout={() => {
