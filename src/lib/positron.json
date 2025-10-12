@@ -473,7 +473,7 @@
           "visibility": "visible"
         },
         "paint": {
-          "fill-color": "grey",
+          "fill-color": "#caf0f8",
           "fill-antialias": true,
           "fill-translate-anchor": "map",
           "fill-opacity": 1
@@ -1796,11 +1796,11 @@
             "stops": [
               [
                 13,
-                "#e6e6e6"
+                "#ddd"
               ],
               [
                 15.7,
-                "#e6e6e6"
+                "#ddd"
               ],
               [
                 16,
@@ -2015,7 +2015,7 @@
         }
       },
       {
-        "id": "road_sec_case_noramp",
+        "id": "major_streets",
         "type": "line",
         "source": "carto",
         "source-layer": "transportation",
@@ -2088,7 +2088,7 @@
               ],
               [
                 13,
-                "#ddd"
+                "#e6e6e6"
               ]
             ]
           }
@@ -2099,7 +2099,7 @@
         "type": "line",
         "source": "carto",
         "source-layer": "transportation",
-        "minzoom": 7,
+        "minzoom": 10,
         "maxzoom": 24,
         "filter": [
           "all",
@@ -2183,7 +2183,7 @@
             "stops": [
               [
                 7,
-                "#e6e6e6"
+                "#ddd"
               ],
               [
                 12,
@@ -2194,11 +2194,11 @@
         }
       },
       {
-        "id": "road_trunk_case_noramp",
+        "id": "trunway-outline",
         "type": "line",
         "source": "carto",
         "source-layer": "transportation",
-        "minzoom": 5,
+        "minzoom": 10,
         "maxzoom": 24,
         "filter": [
           "all",
@@ -2282,7 +2282,7 @@
             "stops": [
               [
                 5,
-                "#e6e6e6"
+                "#ddd"
               ],
               [
                 12,
@@ -2293,11 +2293,11 @@
         }
       },
       {
-        "id": "road_mot_case_noramp",
+        "id": "expressway_outline",
         "type": "line",
         "source": "carto",
         "source-layer": "transportation",
-        "minzoom": 5,
+        "minzoom": 10,
         "maxzoom": 24,
         "filter": [
           "all",
@@ -2385,11 +2385,11 @@
             "stops": [
               [
                 5,
-                "#e6e6e6"
+                "#D3D3D3"
               ],
               [
                 12,
-                "#ddd"
+                "#D3D3D3"
               ]
             ]
           }

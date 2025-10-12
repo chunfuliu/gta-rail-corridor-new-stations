@@ -7,7 +7,7 @@
     import rtp from "../data/regional-transportation-plan-non-heavy-rail.geo.json"
     //import buffer from "../data/buffer-250m.geo.json"
     import LineChart from "../lib/line-chart.svelte"
-    import * as d3 from "d3";
+    import Writing from "../lib/writing.svelte"
 
     
     
@@ -37,6 +37,74 @@
         "Freight Line 7"
     ]
 
+    let perc0010 = false
+    let perc1120 = false
+    let perc2130 = false
+    let perc3140 = false
+    let perc4150 = false
+    let perc5160 = false
+    let perc6170 = false
+    let perc7180 = false
+    let perc8190 = false
+    let perc9199 = false
+    let percgroups = []
+
+    function dataselect (){
+        percgroups = []
+        map.setFilter("popPoints-layer", ["all",[">", ["get", "Pop21"], 0],["<", ["get", "Pop21"], 70000]]);
+
+            if(perc0010){
+                percgroups.push(["all",[">", ["get", "Pop21"], 0],["<", ["get", "Pop21"], 42]]);
+            }
+
+            if(perc1120){
+                percgroups.push(["all",[">", ["get", "Pop21"], 42],["<=", ["get", "Pop21"], 88]])
+            }
+
+            if(perc2130){
+                percgroups.push(["all",[">", ["get", "Pop21"], 88],["<=", ["get", "Pop21"], 246]])
+            }
+
+            if(perc3140){
+                percgroups.push(["all",[">", ["get", "Pop21"], 246],["<=", ["get", "Pop21"], 1086]])
+            }
+
+            if(perc4150){   
+                percgroups.push(["all",[">", ["get", "Pop21"], 1086],["<=", ["get", "Pop21"], 2996]])
+            }
+
+            if(perc5160){
+                percgroups.push(["all",[">", ["get", "Pop21"], 2996],["<=", ["get", "Pop21"], 4962]])
+            }
+
+            if(perc6170){
+                percgroups.push(["all",[">", ["get", "Pop21"], 4962],["<=", ["get", "Pop21"], 6902]])
+            }
+
+            if(perc7180){
+                percgroups.push(["all",[">", ["get", "Pop21"], 6902],["<=", ["get", "Pop21"], 9235]])
+            }
+
+            if(perc8190){
+                percgroups.push(["all",[">", ["get", "Pop21"], 9235],["<=", ["get", "Pop21"], 14510]])
+            }
+            
+            if(perc9199){
+                percgroups.push(["all",[">", ["get", "Pop21"], 14510],["<=", ["get", "Pop21"], 70000]])
+            }
+
+            console.log(percgroups)
+            var filter = ["any", ...percgroups];
+            map.setFilter("popPoints-layer", filter);
+            console.log(filter)
+            if (filter.length == 1) {
+            // This is to remove all filters when there is just one "any" in the filter
+            map.setFilter("popPoints-layer", null);
+        } 
+
+
+    }
+
     async function rail_dropdown (){
         //this function controls the actions after a value (selectedLine) is selected in the drop down
         if (selectedLine == "All"){
@@ -56,6 +124,8 @@
             mapHeight = "50vh" // normal height for other lines
         }
     }
+
+
 
     function fidvalue(fids, pointx, pointy) {
         fid = fids
@@ -106,6 +176,8 @@
 
         ];
 
+        
+
     //async function filtre ( )
     
     onMount(async () => {
@@ -146,18 +218,27 @@
                 id: "rtp-id",
                 type: "line",
                 source: "rtp",
-                minzoom: 10,
+                minzoom: 9,
                 paint: {
                     "line-color":[
                         "match",
                         ["get", "System"],
-                        "Subway", "#D97D55",
-                        "LRT",  "#52796f",
-                        "BRT",  "#84a98c",
+                        "Subway", "#4a4e69",
+                        "LRT",  "#9a8c98",
+                        "BRT",  "#c9ada7",
                         "Priority Bus", "#cad2c5",
-                        "#D3D3D3"
+                        "rgba(0,0,0,0)"
                     ],
-                    "line-width": 2
+                    "line-width": [
+                        "match",
+                        ["get", "System"],
+                        "Subway", 3,
+                        "LRT",  2,
+                        "BRT",  2,
+                        "Priority Bus", 0.5,
+                        0
+                    ],
+                    "line-dasharray": [5, 1]
                 },
             }, "place_town");
 
@@ -167,7 +248,7 @@
                 type: "line",
                 source: "main-lines",
                 paint: {
-                    "line-color":"#5e5d5d",
+                    "line-color":"#d6ccc2",
                     "line-width": 4
                 },
             });
@@ -234,7 +315,7 @@
             map.on("mouseleave", "popPoints-layer", () => {
                 map.getCanvas().style.cursor = "";
             });
-            /*
+            
             // Move all layers of type "symbol" to the top
             for (const layer of layers) {
                 if (layer.type === "symbol") {
@@ -242,7 +323,7 @@
                 map.moveLayer(layer.id);
                 }
             }
-            */
+            
         });
     });
 </script>
@@ -274,20 +355,116 @@
         fid = {fid}
     />
     {/key}
+
+
 </div>
+
 {:else}
-<div class="legend">
-        <span class="rect" style = "background-color: #055E5E">Bottom 10%</span>    
-        <span class="rect" style = "background-color: #407E6E">11-20%</span>
-        <span class="rect" style = "background-color: #7B9E7E">21-30%</span>
-        <span class="rect" style = "background-color: #B6BE8E">31-40%</span>
-        <span class="rect" style = "background-color: #F1DE9F">41-50%</span>
-        <span class="rect" style = "background-color: #ECBD80">51-60%</span>
-        <span class="rect" style = "background-color: #E79D62">61-70%</span>
-        <span class="rect" style = "background-color: #E37D44">71-80%</span>
-        <span class="rect" style = "background-color: #DE5D26">81-90%</span>
-        <span class="rect" style = "background-color: #DA3D08">Top 10%</span>
-    </div>
+<div class="button-container">
+        <button class="application-button"
+            on:click={() => {
+                perc0010 = !perc0010;
+                //allFilter = false;
+                dataselect();
+            }}
+            style="background-color: {perc0010
+                ? 'rgba(5, 94, 94, 1)': 'rgba(5, 94, 94, 0.2)'}; color: {perc0010 ? 'white' : 'black'}"
+            >0 - 10%
+        </button>
+        <button class="application-button"
+            on:click={() => {
+                perc1120 = !perc1120;
+                //allFilter = false;
+                dataselect();
+            }}
+            style="background-color: {perc1120
+                ? 'rgba(64, 126, 110, 1)': 'rgba(64, 126, 110, 0.2)'}; color: {perc1120 ? 'white' : 'black'}"
+            >11 - 20%
+        </button>
+        <button class="application-button"
+            on:click={() => {
+                perc2130 = !perc2130;
+                //allFilter = false;
+                dataselect();
+            }}
+            style="background-color: {perc2130
+                ? 'rgba(123, 158, 126, 1)': 'rgba(123, 158, 126, 0.2)'}; color: {perc2130 ? 'black' : 'black'}"
+            >21 - 30%
+        </button>
+        <button class="application-button"
+            on:click={() => {
+                perc3140 = !perc3140;
+                //allFilter = false;
+                dataselect();
+            }}
+            style="background-color: {perc3140
+                ? 'rgba(182, 190, 142, 1)': 'rgba(182, 190, 142, 0.2)'}; color: {perc3140 ? 'black' : 'black'}"
+            >31 - 40%
+        </button>
+        <button class="application-button"
+            on:click={() => {
+                perc4150 = !perc4150;
+                //allFilter = false;
+                dataselect();
+            }}
+            style="background-color: {perc4150
+                ? 'rgba(241, 222, 159, 1)': 'rgba(241, 222, 159, 0.2)'}; color: {perc4150 ? 'black' : 'black'}"
+            >41 - 50%
+        </button>
+        <button class="application-button"
+            on:click={() => {
+                perc5160 = !perc5160;
+                //allFilter = false;
+                dataselect();
+            }}
+            style="background-color: {perc5160
+                ? 'rgba(236, 189, 128, 1)': 'rgba(236, 189, 128, 0.2)'}; color: {perc5160 ? 'black' : 'black'}"
+            >51 - 60%
+        </button>
+        <button class="application-button"
+            on:click={() => {
+                perc6170 = !perc6170;
+                //allFilter = false;
+                dataselect();
+            }}
+            style="background-color: {perc6170
+                ? 'rgba(231, 157, 98, 1)': 'rgba(231, 157, 98, 0.2)'}; color: {perc6170 ? 'black' : 'black'}"
+            >61 - 70%
+        </button>
+        <button class="application-button"
+            on:click={() => {
+                perc7180 = !perc7180;
+                //allFilter = false;
+                dataselect();
+            }}
+            style="background-color: {perc7180
+                ? 'rgba(227, 125, 68, 1)': 'rgba(227, 125, 68, 0.2)'}; color: {perc7180 ? 'black' : 'black'}"
+            >71 - 80%
+        </button>
+        <button class="application-button"
+            on:click={() => {
+                perc8190 = !perc8190;
+                //allFilter = false;
+                dataselect();
+            }}
+            style="background-color: {perc8190
+                ? 'rgba(222, 93, 38, 1)': 'rgba(222, 93, 38, 0.2)'}; color: {perc8190 ? 'white' : 'black'}"
+            >81 - 90%
+        </button>
+        <button class="application-button"
+            on:click={() => {
+                perc9199 = !perc9199;
+                //allFilter = false;
+                dataselect();
+            }}
+            style="background-color: {perc9199
+                ? 'rgba(218, 61, 8, 1)': 'rgba(218, 61, 8, 0.2)'}; color: {perc9199 ? 'white' : 'black'}"
+            >91 - 100%
+        </button>
+        
+    
+
+</div>
 {/if}
 
 
@@ -304,13 +481,6 @@
         overflow: hidden;
     }
     .header {
-        /*display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        padding-left: 10px;
-        color: #f9f6f1;
-        font-size: 20px;*/
-
         left: 5vw;
         top: 2vh;
         max-width: 90vw;
@@ -335,57 +505,33 @@
         overflow: hidden;
         padding-bottom: 20px;
     }
-    
-    
-
-    .legend {
-        
-        top: 79vh;
-        left: 5vw;
-        height: 20vh;
-        width: 90vw;
-        max-width: 90vw;
-        background-color: rgba(255, 255, 255, 0);
-        padding: 10px;;
-        /*border-radius: 5px;*/
-        
+    .button-container {
         position: absolute;
-        text-align: center;
-        
-        box-sizing: border-box; /* <-- include padding in width calculation */
-        display: flex;         /* make children flex items */
-        flex-wrap: wrap;       /* wrap if needed */
+        top: 79vh;           /* same vertical position as before */
+        left: 5vw;           /* align with map left edge */
+        width: 90vw;         /* match map width */
+        display: flex;       /* enable flex layout */
+        justify-content: space-between; /* spread buttons evenly */
+        flex-wrap: wrap;     /* allow wrapping on smaller screens */
+        gap: 5px;            /* small gap between buttons */
     }
-    .rect {
-        flex: 1;               /* each rect takes equal share of available width */
-        margin: 0 2px;         /* spacing between boxes */
-        height: 15vh;           /* fixed height */
-        
-        display: flex;          /* use flex to center text */
-        align-items: center;    /* vertical centering */
-        justify-content: center;/* horizontal centering */
 
-        font-size: 14px;
-        font-weight: bolder;
-
-        overflow: hidden;       /* prevents text overflow */
-        white-space: nowrap;    /* keep text in one line */
-        text-overflow: ellipsis;/* show "..." if text is too long */
-        background-color: #bbb;
-        color: #000;
-
-        border-radius: 3px;     /* optional rounding */
-}
-
-
-
+    .application-button {
+        flex: 1;             /* let buttons expand evenly */
+        min-width: 80px;     /* prevents them from becoming too small */
+        font-size: 12px;
+        height: 30px;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
     .legend-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    margin-top: 4px;
-}
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        margin-top: 4px;
+    }
 
     .legend-labels span {
         flex: 1;
