@@ -19,6 +19,7 @@
 	let selected_y
 	let selected_coordinates
 	let mouse_x, mouse_y;
+	let population
     const setMousePosition = function (event) {
         mouse_x = event.clientX;
         mouse_y = event.clientY;
@@ -29,12 +30,13 @@
     const dispatch = createEventDispatcher();
 
     // Allows both bind:value and on:change for parent value retrieval
-    function setValue(val, selected_coordinates) {
+    function setValue(val, selected_coordinates, pop) {
       dispatch_fid = val;
 	  selected_x = selected_coordinates[0]
 	  selected_y = selected_coordinates[1]
+	  population = pop
 	  //console.log(dispatch_fid, selected_x, selected_y)
-      dispatch("change", {dispatch_fid, selected_x, selected_y});
+      dispatch("change", {dispatch_fid, selected_x, selected_y,population});
     }
 
 
@@ -188,7 +190,8 @@
 							//selected_y = point.properties["Y"];
                             //selected_datapoint_i = i;
 							//console.log(selected_x, "  ", selected_y)
-                            setValue(selected_datapoint, selected_coordinates)
+							population = point.properties["Pop21"]
+                            setValue(selected_datapoint, selected_coordinates, population)
                         }}
                         on:mouseout={() => {
                             selected_datapoint = undefined;
@@ -279,15 +282,27 @@
 						stroke-dasharray="2 6"
 
 					/>
+					
 					<!-- Station dots -->
 					<circle
-						r="8"
+						r="10"
 						cx={xScale(i)}
 						cy={yScale(point.properties["Pop21"])}
 						fill="#F1C500"
 						stroke="#F1C500"
 						stroke-width="3"
 					/>
+					<text
+						x={xScale(i)}
+						y={yScale(point.properties["Pop21"])+4}
+						text-anchor="middle"
+						font-weight = "bold"
+						fill="black"
+						font-size="11"
+						
+					>
+						{Math.round(point.properties["Pop21"]/1000) + "K"}
+					</text>
 					<text
 						x={xScale(i)}
 						y={yScale(point.properties["Pop21"]+5000)}
