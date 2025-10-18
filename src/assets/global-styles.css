@@ -78,15 +78,15 @@ main {
 h1 {
 	font-family: TradeGothicBold;
 	font-size: 32px;
-	color: var(--brandWhite);
+	color: var(--brandRed);
 	padding-top: 0px;
 }
 
 h2 {
 	text-align: left;
 	font-family: TradeGothicBold;
-	font-size: 30px;
-	color: var(--brandWhite);
+	font-size: 25px;
+	color: var(--brandLightBlue);
 }
 
 h3 {
@@ -99,7 +99,7 @@ h3 {
 
 p {
 	font-family: RobotoRegular;
-	color: var(--brandWhite);
+	color: var(--brandGray);
 	text-align: left;
 	font-size: 17px;
 	line-height: 25px;
