@@ -53,7 +53,7 @@
 
 	const padding = { top: 20, right: 40, bottom: 25, left: 40 };
 	let width = 7000;
-	let height = 300;
+	let height = 250;
 
 	function filterDesignation(jsondata) {
 		return jsondata.properties.Name === lineName;
@@ -322,13 +322,13 @@
 
 <style>
 	.chart {
-		width: 90vw;
+		width: 100%;
 		margin: 0 auto;
 		background-color: var(--brandGray90);
 		overflow-x: auto;
 		scrollbar-width: 1px;
 	}
-	    .bar {
+	.bar {
 
         fill: white;
         opacity: 0;

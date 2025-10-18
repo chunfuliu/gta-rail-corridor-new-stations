@@ -5,9 +5,10 @@
 	import popPoints from '../data/pop-1km-500m-intervals.geo.json';
 	import gtaMain from '../data/gta-main-lines.geo.json';
 	import rtp from '../data/regional-transportation-plan-non-heavy-rail.geo.json';
+	import stations from '../data/stations-in-gta.geo.json';
 	//import buffer from "../data/buffer-250m.geo.json"
 	import LineChart from '../lib/line-chart.svelte';
-	import Writing from '../lib/writing.svelte';
+	
 
 	let map;
 	let fid = 0;
@@ -121,7 +122,7 @@
 			map.setFilter('labels', ['==', ['get', 'Name'], selectedLine]);
 			map.setPaintProperty('popPoints-layer', 'circle-radius', 10);
 			map.setPaintProperty('popPoints-selected-layer', 'circle-radius', 10);
-			mapHeight = '55vh'; // normal height for other lines
+			mapHeight = '50vh'; // normal height for other lines
 		}
 	}
 
@@ -148,45 +149,36 @@
 	}
 
 	let circlecolor_perc = [
-		'interpolate',
-		['linear'],
+		'step',
 		['get', 'Pop21'],
-		0,
-		'#055E5E', //0.10, colors[1],
-		42,
-		'#407E6E', //0.30, colors[3],
-		88,
-		'#7B9E7E', //0.50, colors[5],
-		246,
-		'#B6BE8E', //0.70, colors[7],
-		1086,
-		'#F1DE9F', //0.90, colors[9],
-		2996,
-		'#ECBD80',
-		4962,
-		'#E79D62',
-		6902,
-		'#E37D44',
-		9235,
-		'#DE5D26',
-		14510,
-		'#DA3D08'
+
+		 			'#055E5E', //0.10, colors[1],
+		42, 		'#407E6E', //0.30, colors[3],
+		88, 		'#7B9E7E', //0.50, colors[5],
+		246, 		'#B6BE8E', //0.70, colors[7],
+		1086, 		'#F1DE9F', //0.90, colors[9],
+		2996, 		'#ECBD80',
+		4962, 		'#E79D62',
+		6902, 		'#E37D44',
+		9235, 		'#DE5D26',
+		14510, 		'#DA3D08'
 	];
 
 	//async function filtre ( )
 
 	onMount(async () => {
+		
 		map = new maplibregl.Map({
 			container: 'map',
 			style: map_styles, //'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
 			center: [-79.4, 43.69], // starting position
 			minZoom: 7,
-			zoom: 9,
+			zoom: 8,
 			maxZoom: 15,
 			scrollZoom: true,
 			attributionControl: false
 		});
-
+		
 		//console.log(stations)
 		map.on('load', () => {
 			const layers = map.getStyle().layers;
@@ -195,6 +187,11 @@
 			map.addSource('popPoints', {
 				type: 'geojson',
 				data: popPoints
+			});
+
+			map.addSource('stations', {
+				type: 'geojson',
+				data: stations
 			});
 
 			map.addSource('main-lines', {
@@ -223,9 +220,8 @@
 							'#9a8c98',
 							'BRT',
 							'#c9ada7',
-							'Priority Bus',
-							'#cad2c5',
-							'rgba(0,0,0,0)'
+							
+							'#86B0BD'
 						],
 						'line-width': [
 							'match',
@@ -236,15 +232,41 @@
 							2,
 							'BRT',
 							2,
-							'Priority Bus',
-							0.5,
-							0
+							
+							2
+							
 						],
 						'line-dasharray': [5, 1]
 					}
 				},
 				'place_town'
 			);
+			map.addLayer({
+				id: 'stations-layer',
+				type: 'circle',
+				source: 'stations',
+				minzoom: 10,
+				paint: {
+					'circle-radius': 5,
+					'circle-stroke-width': 0,
+					'circle-stroke-color': '#0D534D',
+					'circle-color': [
+						'match',
+						['get', 'TECHNOLOGY'],
+						'Subway',
+						'#4a4e69',
+						'LRT',
+						'#9a8c98',
+						'BRT',
+						'#c9ada7',
+						'Priority Bus',
+						'#cad2c5',
+						'rgba(255,255,255,1)'
+					],
+					
+					'circle-opacity': 1
+				}
+			});
 
 			map.addLayer({
 				id: 'main-lines-id',
@@ -253,6 +275,25 @@
 				paint: {
 					'line-color': '#d6ccc2',
 					'line-width': 4
+				}
+			});
+
+			map.addLayer({
+				id: 'labels-rtp',
+				type: 'symbol',
+				source: 'rtp',
+				minzoom: 10,
+				layout: {
+					"symbol-placement": "line",
+					"text-font": ["Noto Sans Regular"],
+					"text-field": '{NAME} {System}', // part 2 of this is how to do it
+					"text-size": 9,
+					'text-offset': [0, 1]
+				},
+				paint: {
+					'text-color': '#5e5d5d',
+					'text-halo-color': '#ffffff',
+					'text-halo-width': 2
 				}
 			});
 
@@ -268,6 +309,8 @@
 					'circle-opacity': 1
 				}
 			});
+
+			
 
 			map.addLayer({
 				id: 'popPoints-selected-layer',
@@ -311,6 +354,8 @@
 				filter: ['==', ['get', 'Name'], selectedLine]
 			});
 
+			
+
 			map.on('mouseenter', 'popPoints-layer', (e) => {
 				map.getCanvas().style.cursor = 'pointer';
 				fid = e.features[0].properties['Fid'];
@@ -323,6 +368,14 @@
 				map.getCanvas().style.cursor = '';
 			});
 
+			map.on('touchstart', 'popPoints-layer', (e) => {
+				fid = e.features[0].properties['Fid'];
+				//console.log(e.features[0].properties['Name'])
+				population = e.features[0].properties['Pop21'];
+				//map.setFilter("popPoints-selected-layer", ["==", ["get", "Fid"], fid]);
+				map.setFilter('popPoints-selected-layer', ['==', ['get', 'Fid'], fid]);
+			});
+
 			// Move all layers of type "symbol" to the top
 			for (const layer of layers) {
 				if (layer.type === 'symbol') {
@@ -333,9 +386,6 @@
 		});
 	});
 </script>
-
-<div id="map" class="map" style="height: {mapHeight}" />
-
 <div class="header">
 	<select bind:value={selectedLine} on:change={rail_dropdown}>
 		{#each railline as rail}
@@ -343,6 +393,9 @@
 		{/each}
 	</select>
 </div>
+<div id="map" class="map" style="height: {mapHeight}" />
+
+
 
 {#if selectedLine != 'All'}
 	<div class="charts">
@@ -362,11 +415,9 @@
 			/>
 		{/key}
 	</div>
-	<div class="column-text">
-		<h2>
-			Population: {Math.round(population / 10) / 100 + 'k '}, scroll the map and chart to view more!
-		</h2>
-	</div>
+	<h3>
+		Population: {Math.round(population / 10) / 100 + 'k '}, scroll the map and chart to view more!
+	</h3>
 	<!--
 
     
@@ -398,7 +449,6 @@
 
 </div>-->
 {:else}
-	<h1>POPULATION NEAR RAIL CORRIDORS</h1>
 
 	<div class="button-container">
 		<button
@@ -522,6 +572,8 @@
 			>91 - 100%
 		</button> <br />
 	</div>
+	<h1>FINDING FUTURE STATIONS: POPULATION NEAR RAIL CORRIDORS</h1>
+
 
 	<div class="column-text">
 		<h2>Click the Buttons & Play with the Drop Down</h2>
@@ -549,20 +601,16 @@
 			spatial employment data across the GTA). One caveat, however, is that I’m not a transportation
 			expert—there are many other factors that need to be considered when assessing the feasibility
 			of a station location. In my mind, these trains don’t have to be long. They could be something
-			like Montreal’s REM or Vancouver’s SkyTrain—medium-capacity, automated, and frequent. The
-			existing GO trains could then function as express services, similar to the express trains we
-			see on the Lakeshore West Line today.
+			like Montreal’s REM or Vancouver’s skyTrain, serving at medium-capacity, automated, and
+			frequent. The existing GO trains could then function as express services, similar to the
+			express trains we see on the Lakeshore West Line today.
 		</p>
 
 		<h2>Methodology</h2>
-		<h3>The Dots:</h3>
 		<p>
 			The dots are generated along existing rail lines at 500-metre intervals. The population for
 			each dot represents the number of people living within 1 kilometre of that point.
-		</p>
 
-		<h3>The Lines:</h3>
-		<p>
 			The passenger lines follow the existing Metrolinx passenger rail service routes, as well as
 			the proposed ones. This map also includes rail lines that currently do not have passenger
 			service, such as freight rail lines. The extent of the rail network shown is limited to the
@@ -573,22 +621,17 @@
 
 <style>
 	.map {
-		left: 5vw;
-		top: 5vh;
-		width: 90vw;
+		left: 5%;
+		top: 5%;
+		width: 90%;
 		height: 70vh;
 		position: relative;
 		overflow: hidden;
 	}
 	.column-text {
-		left: 5vw;
+		left: 5%;
+		width: 90%;
 		position: relative;
-		display: block; /* ensures normal block layout */
-		column-count: 2;
-		column-gap: 20px;
-		width: 90vw;
-		padding-top: 1vh;
-		padding-bottom: 15px;
 	}
 	.column-text p {
 		margin-top: 0; /* Removes default top margin for paragraphs */
@@ -599,8 +642,8 @@
 		padding-top: 0; /* Removes default top padding for paragraphs */
 	}
 	.header {
-		left: 6vw;
-		top: 0vh;
+		left: 5%;
+		top: 5%;
 		max-width: 90vw;
 		position: relative;
 		overflow: hidden;
@@ -608,30 +651,30 @@
 
 	.header select {
 		width: auto;
-		height: 4vh;
+		height: auto;
 		font-size: 20px;
-		color: var(--brandYellow);
+		color: var(--brandWhite);
 		font-family: TradeGothicBold;
-		background: var(--brandGray90);
+		background: var(--brandDarkGreen);
 		border: none;
 	}
 	.charts {
-		left: 5vw;
-		top: 5vh;
-		max-width: 90vw;
+		left: 5%;
+		top: 5%;
+		max-width: 90%;
 		position: relative;
 		overflow: hidden;
 		display: block;
-		padding-bottom: 50px;
+		padding-bottom: 0px;
 	}
 	.button-container {
 		position: relative; /* same vertical position as before */
-		left: 5vw; /* align with map left edge */
-		width: 90vw; /* match map width */
+		left: 5%; /* align with map left edge */
+		width: 90%; /* match map width */
 		display: flex; /* enable flex layout */
 		justify-content: space-between; /* spread buttons evenly */
 		flex-wrap: wrap; /* allow wrapping on smaller screens */
-		gap: 5px; /* small gap between buttons */
+		gap: 0px; /* small gap between buttons */
 	}
 
 	.application-button {
@@ -645,8 +688,15 @@
 	}
 	h1 {
 		position: relative;
-		left: 5vw;
+		max-width: 90%;
+		left: 5%;
 	}
+	h3{
+		position: relative;
+		max-width: 90%;
+		left: 5%;
+	}
+	
 	/* SCROLL BARS */
 	::-webkit-scrollbar {
 		width: 1px;
@@ -666,5 +716,17 @@
 	/* Handle on hover */
 	::-webkit-scrollbar-thumb:hover {
 		background: #41729f;
+	}
+	@media (min-width:600px){
+		.column-text {
+			left: 5%;
+			position: relative;
+			display: block; /* ensures normal block layout */
+			column-count: 2;
+			column-gap: 20px;
+			width: 90%;
+			padding-top: 1vh;
+			padding-bottom: 15px;
+		}
 	}
 </style>
