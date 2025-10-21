@@ -1,4 +1,4 @@
-# <b>Population Living Near Rail Corridors
+# <b>Population Living Near Rail Corridors </b>
 
 This is a data visualization project to show the number of people living near exiting rail corridors <br>
 
@@ -10,3 +10,5 @@ Sometimes when I open Google Maps, I get distracted by the extensive network of 
 
 <strong>Link to the Web Map</strong>
 https://chunfuliu.github.io/gta-rail-corridor-new-stations/
+
+<img title="Rail Map" alt="Alt text" src="static/web-card.png">
