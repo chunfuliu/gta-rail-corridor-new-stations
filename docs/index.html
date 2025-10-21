@@ -1,24 +1,44 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" href="./favicon.svg" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		
-		<link href="./_app/immutable/assets/2.xhUkqVSG.css" rel="stylesheet">
-		<link rel="modulepreload" href="./_app/immutable/entry/start.RJb983vk.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/DIRF3k45.js">
+
+<head>
+	<meta charset="utf-8" />
+	<link rel="icon" href="./favicon.svg" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>New Station Analysis</title>
+	
+		<link href="./_app/immutable/assets/2.C74WtlEW.css" rel="stylesheet">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.zMU-pqmR.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/C-gB50-F.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/D5HQ4zQz.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/BFql5qIm.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.Hf2FK1a5.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.DUzHanFT.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/DsnmJJEf.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/DesypM2p.js">
 		<link rel="modulepreload" href="./_app/immutable/nodes/0.BmUegjUn.js">
-		<link rel="modulepreload" href="./_app/immutable/nodes/2.CPhLlBce.js">
+		<link rel="modulepreload" href="./_app/immutable/nodes/2.D5OqWWUm.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/CNZqagO2.js">
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div><!--[--><!--[--><!----><!----><div class="header svelte-1uha8ag"><select class="svelte-1uha8ag"><!--[--><option class="svelte-1uha8ag" selected>All</option><option class="svelte-1uha8ag">Lakeshore East Line</option><option class="svelte-1uha8ag">Lakeshore West Line</option><option class="svelte-1uha8ag">Richmond Hill Line</option><option class="svelte-1uha8ag">Milton Line</option><option class="svelte-1uha8ag">Kitchener Line</option><option class="svelte-1uha8ag">Stouville Line</option><option class="svelte-1uha8ag">Freight Line 1</option><option class="svelte-1uha8ag">Freight Line 2</option><option class="svelte-1uha8ag">Freight Line 3</option><option class="svelte-1uha8ag">Freight Line 4</option><option class="svelte-1uha8ag">Freight Line 5</option><option class="svelte-1uha8ag">Freight Line 6</option><option class="svelte-1uha8ag">Freight Line 7</option><!--]--></select></div> <div id="map" class="map svelte-1uha8ag" style="height: 70vh"></div> <!--[!--><div class="button-container svelte-1uha8ag"><button class="application-button svelte-1uha8ag" style="background-color: rgba(5, 94, 94, 1); color: white">0 - 10%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(64, 126, 110, 1); color: white">11 - 20%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(123, 158, 126, 1); color: black">21 - 30%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(182, 190, 142, 1); color: black">31 - 40%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(241, 222, 159, 1); color: black">41 - 50%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(236, 189, 128, 1); color: black">51 - 60%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(231, 157, 98, 1); color: black">61 - 70%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(227, 125, 68, 1); color: black">71 - 80%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(222, 93, 38, 1); color: white">81 - 90%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(218, 61, 8, 1); color: white">91 - 100%</button> <br class="svelte-1uha8ag"/></div> <h1 class="svelte-1uha8ag">FINDING FUTURE STATIONS: POPULATION NEAR RAIL CORRIDORS</h1> <div class="column-text svelte-1uha8ag"><h2 class="svelte-1uha8ag">Click the Buttons &amp; Play with the Drop Down</h2> <p class="svelte-1uha8ag">Click the buttons above to filter the points in the network. The colouring of the dots
+	<meta name="description" content="Finding potential new station locations in GTA">
+	<meta name="author" content="Michael Liu">
+
+	<meta property="og:title" content="Population Near Rail Corridors" />
+	<meta name="og:description" content="Finding new station locations in GTA "/>
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://chunfuliu.github.io/gta-rail-corridor-new-stations/" />
+	<meta property="og:image" content="https://chunfuliu.github.io/gta-rail-corridor-new-stations/web-card.png" />
+	<meta property="og:locale" content="en_CA">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XB09CWTEWB"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag() { dataLayer.push(arguments); }
+	gtag('js', new Date());
+	gtag('config', 'G-XB09CWTEWB');
+</script>
+
+
+<body data-sveltekit-preload-data="hover">
+	<div style="display: contents"><!--[--><!--[--><!----><!----><div class="header svelte-1uha8ag"><select class="svelte-1uha8ag"><!--[--><option class="svelte-1uha8ag" selected>All</option><option class="svelte-1uha8ag">Lakeshore East Line</option><option class="svelte-1uha8ag">Lakeshore West Line</option><option class="svelte-1uha8ag">Richmond Hill Line</option><option class="svelte-1uha8ag">Milton Line</option><option class="svelte-1uha8ag">Kitchener Line</option><option class="svelte-1uha8ag">Stouville Line</option><option class="svelte-1uha8ag">Freight Line 1</option><option class="svelte-1uha8ag">Freight Line 2</option><option class="svelte-1uha8ag">Freight Line 3</option><option class="svelte-1uha8ag">Freight Line 4</option><option class="svelte-1uha8ag">Freight Line 5</option><option class="svelte-1uha8ag">Freight Line 6</option><option class="svelte-1uha8ag">Freight Line 7</option><!--]--></select></div> <div id="map" class="map svelte-1uha8ag" style="height: 70vh"></div> <!--[!--><div class="button-container svelte-1uha8ag"><button class="application-button svelte-1uha8ag" style="background-color: rgba(5, 94, 94, 1); color: white">0 - 10%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(64, 126, 110, 1); color: white">11 - 20%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(123, 158, 126, 1); color: black">21 - 30%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(182, 190, 142, 1); color: black">31 - 40%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(241, 222, 159, 1); color: black">41 - 50%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(236, 189, 128, 1); color: black">51 - 60%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(231, 157, 98, 1); color: black">61 - 70%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(227, 125, 68, 1); color: black">71 - 80%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(222, 93, 38, 1); color: white">81 - 90%</button> <button class="application-button svelte-1uha8ag" style="background-color: rgba(218, 61, 8, 1); color: white">91 - 100%</button> <br class="svelte-1uha8ag"/></div> <h1 class="svelte-1uha8ag">FINDING FUTURE STATIONS: POPULATION NEAR RAIL CORRIDORS</h1> <div class="column-text svelte-1uha8ag"><h2 class="svelte-1uha8ag">Click the Buttons &amp; Play with the Drop Down</h2> <p class="svelte-1uha8ag">Click the buttons above to filter the points in the network. The colouring of the dots
 			represent the number of people living near each point on the map. Red dots indicate areas with
 			higher populations, while teal dots represent areas with lower populations. The colour scale
 			is based on ranking the data from the lowest to highest values and dividing it into 10 groups.
@@ -49,7 +69,7 @@
 			
 			<script>
 				{
-					__sveltekit_b2nhgb = {
+					__sveltekit_kytg9d = {
 						base: new URL(".", location).pathname.slice(0, -1),
 						assets: "/gta-rail-corridor-new-stations"
 					};
@@ -57,8 +77,8 @@
 					const element = document.currentScript.parentElement;
 
 					Promise.all([
-						import("./_app/immutable/entry/start.RJb983vk.js"),
-						import("./_app/immutable/entry/app.Hf2FK1a5.js")
+						import("./_app/immutable/entry/start.zMU-pqmR.js"),
+						import("./_app/immutable/entry/app.DUzHanFT.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element, {
 							node_ids: [0, 2],
@@ -70,5 +90,6 @@
 				}
 			</script>
 		</div>
-	</body>
+</body>
+
 </html>

@@ -357,7 +357,7 @@
 			
 
 			map.on('mouseenter', 'popPoints-layer', (e) => {
-				map.getCanvas().style.cursor = 'pointer';
+				map.getCanvas().style.cursor = '';
 				fid = e.features[0].properties['Fid'];
 				//console.log(e.features[0].properties['Name'])
 				population = e.features[0].properties['Pop21'];
